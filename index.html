@@ -1,297 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClipViral | Turn Long Videos into Viral Shorts - 100% FREE</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>ClipViral - Free Video to Shorts</title>
     <style>
-        /* Your existing CSS remains the same */
-        :root {
-            --primary: #8B5CF6;
-            --primary-dark: #7C3AED;
-            --secondary: #F0F4FF;
-            --dark: #1E293B;
-            --light: #F8FAFC;
-            --success: #10B981;
-            --gray: #64748B;
-            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* ... rest of your CSS remains exactly the same ... */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f5f5f5; }
+        .navbar { background: white; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: bold; color: #8B5CF6; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: #333; font-weight: 500; }
+        .auth-buttons { display: flex; gap: 15px; }
+        .btn { padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-outline { background: transparent; border: 2px solid #8B5CF6; color: #8B5CF6; }
+        .btn-primary { background: #8B5CF6; color: white; }
+        .hero { text-align: center; padding: 100px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
-    <!-- Your existing HTML structure remains the same -->
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <div class="logo"><i class="fas fa-scissors"></i>Clip<span>Viral</span></div>
-                <ul class="nav-links">
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#use-cases">Use Cases</a></li>
-                    <li><a href="#resources">Resources</a></li>
-                </ul>
-                <div class="auth-buttons">
-                    <button class="btn btn-outline" id="loginBtn"><i class="fas fa-sign-in-alt"></i>Log In</button>
-                    <button class="btn btn-primary" id="signupBtn"><i class="fas fa-user-plus"></i>Sign Up Free</button>
-                </div>
-            </nav>
+    <div class="navbar">
+        <div class="logo">ClipViral</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#use-cases">Use Cases</a>
+            <a href="#resources">Resources</a>
         </div>
-    </header>
-
-    <!-- Rest of your HTML remains exactly the same -->
-
-    <script>
-        // Initialize Supabase with YOUR credentials
-        const supabaseUrl = 'https://zbsucwuetnqqptbbuzkb.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpic3Vjd3VldG5xcXB0YmJ1emtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxNDg2NTAsImV4cCI6MjA3ODcyNDY1MH0.Ia88RqIiTrO703zouLguY917eJ4NGmOOOui9UHTqRVo';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        // DOM Elements
-        const uploadFileOption = document.getElementById('uploadFileOption');
-        const pasteUrlOption = document.getElementById('pasteUrlOption');
-        const fileInput = document.getElementById('fileInput');
-        const urlInputContainer = document.getElementById('urlInputContainer');
-        const videoUrlInput = document.getElementById('videoUrl');
-        const processUrlBtn = document.getElementById('processUrl');
-        const processingSection = document.getElementById('processingSection');
-        const resultsSection = document.getElementById('resultsSection');
-        const progressBar = document.getElementById('progressBar');
-        const progressPercent = document.getElementById('progressPercent');
-        const clipsGrid = document.getElementById('clipsGrid');
-        const loginBtn = document.getElementById('loginBtn');
-        const signupBtn = document.getElementById('signupBtn');
-        
-        // Upload option selection
-        uploadFileOption.addEventListener('click', () => {
-            fileInput.click();
-        });
-        
-        pasteUrlOption.addEventListener('click', () => {
-            urlInputContainer.style.display = 'block';
-        });
-        
-        // File input handling
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                const file = e.target.files[0];
-                // Show file info to user
-                uploadFileOption.innerHTML = `
-                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
-                    <h3>File Selected</h3>
-                    <p>${file.name}</p>
-                    <small>${(file.size / (1024 * 1024)).toFixed(2)} MB</small>
-                `;
-                startProcessing();
-            }
-        });
-        
-        // Process URL button
-        processUrlBtn.addEventListener('click', () => {
-            const url = videoUrlInput.value.trim();
-            
-            if (!url) {
-                alert('Please enter a valid video URL');
-                return;
-            }
-            
-            startProcessing();
-        });
-        
-        // Start processing function
-        function startProcessing() {
-            // Show processing section
-            processingSection.style.display = 'block';
-            resultsSection.style.display = 'none';
-            
-            // Scroll to processing section
-            processingSection.scrollIntoView({ behavior: 'smooth' });
-            
-            // Simulate processing using browser-based AI
-            simulateBrowserProcessing();
-        }
-        
-        // Simulate browser-based processing
-        function simulateBrowserProcessing() {
-            let progress = 0;
-            const steps = document.querySelectorAll('.step');
-            let currentStep = 0;
-            
-            const interval = setInterval(() => {
-                // Simulate progress
-                progress += Math.random() * 8;
-                if (progress > 100) progress = 100;
-                
-                progressBar.style.width = progress + '%';
-                progressPercent.textContent = Math.round(progress) + '%';
-                
-                // Update steps
-                if (progress >= 20 && currentStep < 1) {
-                    steps[0].classList.remove('active');
-                    steps[1].classList.add('active');
-                    currentStep = 1;
-                } else if (progress >= 40 && currentStep < 2) {
-                    steps[1].classList.remove('active');
-                    steps[2].classList.add('active');
-                    currentStep = 2;
-                } else if (progress >= 60 && currentStep < 3) {
-                    steps[2].classList.remove('active');
-                    steps[3].classList.add('active');
-                    currentStep = 3;
-                } else if (progress >= 80 && currentStep < 4) {
-                    steps[3].classList.remove('active');
-                    steps[4].classList.add('active');
-                    currentStep = 4;
-                }
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(showResults, 500);
-                }
-            }, 300);
-        }
-        
-        // Show results after processing
-        function showResults() {
-            processingSection.style.display = 'none';
-            resultsSection.style.display = 'block';
-            
-            // Generate sample clips
-            generateClips();
-            
-            // Scroll to results
-            resultsSection.scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Generate sample clips
-        function generateClips() {
-            clipsGrid.innerHTML = '';
-            
-            const clips = [
-                { title: "The Most Exciting Moment", duration: "0:15", views: "1.2M", likes: "245K" },
-                { title: "Key Insight Revealed", duration: "0:22", views: "890K", likes: "156K" },
-                { title: "Funny Blooper Reel", duration: "0:18", views: "2.1M", likes: "412K" },
-                { title: "Main Point Summary", duration: "0:25", views: "760K", likes: "132K" },
-                { title: "Behind The Scenes", duration: "0:20", views: "1.5M", likes: "298K" },
-                { title: "Expert Tip Shared", duration: "0:17", views: "980K", likes: "187K" },
-                { title: "Audience Reaction", duration: "0:19", views: "1.8M", likes: "356K" },
-                { title: "Key Takeaway", duration: "0:16", views: "1.1M", likes: "223K" },
-                { title: "Surprise Ending", duration: "0:21", views: "2.3M", likes: "467K" },
-                { title: "Best Performance", duration: "0:23", views: "1.7M", likes: "321K" }
-            ];
-            
-            clips.forEach((clip, index) => {
-                const clipCard = document.createElement('div');
-                clipCard.className = 'clip-card';
-                clipCard.innerHTML = `
-                    <div class="clip-thumbnail">
-                        <i class="fas fa-play-circle"></i>
-                        <div class="clip-duration">${clip.duration}</div>
-                    </div>
-                    <div class="clip-content">
-                        <h3 class="clip-title">${clip.title}</h3>
-                        <div class="clip-stats">
-                            <span><i class="fas fa-eye"></i> ${clip.views}</span>
-                            <span><i class="fas fa-heart"></i> ${clip.likes}</span>
-                        </div>
-                        <div class="clip-actions">
-                            <button class="clip-action" onclick="previewClip(${index})"><i class="fas fa-play"></i> Preview</button>
-                            <button class="clip-action primary" onclick="downloadClip(${index})"><i class="fas fa-download"></i> Download</button>
-                        </div>
-                    </div>
-                `;
-                clipsGrid.appendChild(clipCard);
-            });
-        }
-        
-        // Preview clip function
-        function previewClip(index) {
-            alert(`Previewing clip ${index + 1} - This would show the actual video clip in a real implementation!`);
-        }
-        
-        // Download clip function  
-        function downloadClip(index) {
-            alert(`Downloading clip ${index + 1} - In a real implementation, this would download the MP4 file!`);
-        }
-        
-        // Auth handlers (using Supabase FREE tier)
-        loginBtn.addEventListener('click', async () => {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-            });
-            if (error) {
-                console.log('Error logging in:', error.message);
-                alert('Login failed: ' + error.message);
-            }
-        });
-        
-        signupBtn.addEventListener('click', async () => {
-            // For demo purposes, we'll use a simple email/password signup
-            const email = prompt('Enter your email:');
-            if (!email) return;
-            
-            const password = prompt('Enter your password:');
-            if (!password) return;
-            
-            const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: password,
-            });
-            
-            if (error) {
-                alert('Error signing up: ' + error.message);
-            } else {
-                alert('Check your email for verification! You can now log in.');
-            }
-        });
-        
-        // Check auth state
-        supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_IN') {
-                alert('Successfully signed in!');
-                loginBtn.style.display = 'none';
-                signupBtn.textContent = 'Dashboard';
-                signupBtn.innerHTML = '<i class="fas fa-tachometer-alt"></i> Dashboard';
-            }
-            
-            if (event === 'SIGNED_OUT') {
-                loginBtn.style.display = 'block';
-                signupBtn.textContent = 'Sign Up Free';
-                signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up Free';
-            }
-        });
-        
-        // Initialize auth state check
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
-                loginBtn.style.display = 'none';
-                signupBtn.textContent = 'Dashboard';
-                signupBtn.innerHTML = '<i class="fas fa-tachometer-alt"></i> Dashboard';
-            }
-        });
-    </script>
+        <div class="auth-buttons">
+            <button class="btn btn-outline">Log In</button>
+            <button class="btn btn-primary">Sign Up Free</button>
+        </div>
+    </div>
+    
+    <div class="hero">
+        <h1>Turn Long Videos into Viral Shorts</h1>
+        <p>100% Free - No Credit Card Required</p>
+    </div>
 </body>
 </html>
